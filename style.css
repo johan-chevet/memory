@@ -2,12 +2,30 @@
   width: 100%;
 } */
 .grid-game {
-  display: flex;
+  display: grid;
   justify-content: center;
 
   background-color: aquamarine;
   width: 100%;
-  gap: 30px;
+  /* gap: 30px; */
+  row-gap: 50px;
+}
+
+.grid-col-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-col-6,
+.grid-col-8 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-col-10 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.grid-col-12 {
+  grid-template-columns: repeat(6, 1fr);
 }
 
 .tile {

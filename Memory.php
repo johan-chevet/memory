@@ -13,6 +13,7 @@ class Memory
     public int $firstSelectedCardIndex;
     public int $secondSelectedCardIndex;
     public array $cards;
+    public int $nbofPairs;
 
     /**
      * @param Card[]
@@ -28,10 +29,20 @@ class Memory
         $this->gameStarted = false;
         $this->firstSelectedCardIndex = -1;
         $this->secondSelectedCardIndex = -1;
+        $this->nbofPairs = 4;
     }
 
     public function startGame(int $nbOfPairs)
     {
+        if (
+            $nbOfPairs !== 3 && $nbOfPairs !== 6 && $nbOfPairs !== 8 &&
+            $nbOfPairs !== 10 && $nbOfPairs !== 12
+        ) {
+            // default value
+            $this->nbofPairs = 4;
+        } else {
+            $this->nbofPairs = $nbOfPairs;
+        }
         $this->cards = [];
         $this->setRandomCardsFromDeck($nbOfPairs);
         $this->gameStarted = true;

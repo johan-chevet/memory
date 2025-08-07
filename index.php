@@ -22,7 +22,7 @@ if (isset($_SESSION["game"])) {
 if (isset($_POST["menu"])) {
     var_dump($_POST["menu"]);
     if ($_POST["menu"] === "start" && !$game->gameStarted) {
-        $game->startGame(6);
+        $game->startGame(12);
     } else if ($_POST["menu"] === "quit" && $game->gameStarted) {
         $game->stopGame();
     }
@@ -72,12 +72,19 @@ if (isset($_POST["reveal"])) {
 <body>
     <?php if (!$game->gameStarted): ?>
         <form action="./index.php" method="post">
+            <select name="nb-pairs" id="nb-pairs">
+                <option value="3" selected>3</option>
+                <option value="6">6</option>
+                <option value="8">8</option>
+                <option value="10">10</option>
+                <option value="12">12</option>
+            </select>
             <button type="submit" name="menu" value="start">Start game</button>
         </form>
     <?php else: ?>
         <form action="./index.php" method="post">
             <button type="submit" name="menu" value="quit">Quit game</button>
-            <div class="grid-game">
+            <div class="grid-game grid-col-<?= $game->nbofPairs ?>">
                 <?php foreach ($game->cards as $key => $card): ?>
                     <button class="tile" name="reveal" value="<?= $key ?>" type="submit" style="<?= "background-image: url(" . $game->getImageFromIndex($key) . ");" ?>"></button>
                 <?php endforeach; ?>
