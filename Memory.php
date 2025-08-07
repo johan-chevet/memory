@@ -10,10 +10,8 @@ class Memory
      * @var Card[]
      */
     public bool $gameStarted;
-    public int $idOfLastCardRevealed;
-    //TODO do with index to prevent click on same card 
-    public Card | null $firstCardSelected;
-    public Card | null $secondCardSelected;
+    public int $firstSelectedCardIndex;
+    public int $secondSelectedCardIndex;
     public array $cards;
 
     /**
@@ -28,9 +26,8 @@ class Memory
         }
         $this->deck = $deck;
         $this->gameStarted = false;
-        $this->idOfLastCardRevealed = -1;
-        $this->firstCardSelected = null;
-        $this->secondCardSelected = null;
+        $this->firstSelectedCardIndex = -1;
+        $this->secondSelectedCardIndex = -1;
     }
 
     public function startGame(int $nbOfPairs)
@@ -38,6 +35,14 @@ class Memory
         $this->cards = [];
         $this->setRandomCardsFromDeck($nbOfPairs);
         $this->gameStarted = true;
+    }
+
+    public function stopGame()
+    {
+        $this->cards = [];
+        $this->gameStarted = false;
+        $this->firstSelectedCardIndex = -1;
+        $this->secondSelectedCardIndex = -1;
     }
 
     private function setRandomCardsFromDeck(int $nbofPairs)
@@ -49,5 +54,14 @@ class Memory
         }
         shuffle($this->cards);
         // var_dump($this->cards);
+    }
+
+    public function getImageFromIndex(int $index): string
+    {
+        if ($index === $this->firstSelectedCardIndex || $index === $this->secondSelectedCardIndex) {
+            return $this->cards[$index]->img_path;
+        }
+        // Todo put card back in game
+        return "./assets/card-back-purple";
     }
 }

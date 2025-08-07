@@ -8,6 +8,7 @@ session_start();
 // TODO delete
 // session_destroy();
 
+
 if (isset($_SESSION["game"])) {
     $game = $_SESSION["game"];
 } else {
@@ -17,40 +18,42 @@ if (isset($_SESSION["game"])) {
     $game = new Memory($cardss);
     $_SESSION["game"] = $game;
 }
-// $game->cards = [];
-// var_dump($_SESSION);
-if (!$game->gameStarted) {
-    $game->startGame(6);
-    // TODO check change bool / with readonly
-}
-// var_dump($game);
 
-if (isset($_POST["test"])) {
+if (isset($_POST["menu"])) {
+    var_dump($_POST["menu"]);
+    if ($_POST["menu"] === "start" && !$game->gameStarted) {
+        $game->startGame(6);
+    } else if ($_POST["menu"] === "quit" && $game->gameStarted) {
+        $game->stopGame();
+    }
+}
+
+if (isset($_POST["reveal"])) {
     echo "submit input";
     // TODO check errors, put in game class?
-    $index = $_POST["test"];
-    if (!$game->firstCardSelected) {
-        $game->firstCardSelected = $game->cards[$index];
-        $game->firstCardSelected->revealed = true;
-    } else if (!$game->secondCardSelected) {
-        // TODO Check found pair
-        $game->secondCardSelected = $game->cards[$index];
-        $game->secondCardSelected->revealed = true;
-        if ($game->firstCardSelected->id === $game->secondCardSelected->id) {
-            echo "pair found";
+    $index = (int)$_POST["reveal"];
+    var_dump($index);
+    var_dump($game->firstSelectedCardIndex);
+
+    // TODO remove or
+    if ($game->firstSelectedCardIndex === $index || $game->firstSelectedCardIndex < 0) {
+        $game->firstSelectedCardIndex = $index;
+        // $game->firstCardSelected->revealed = true;
+    } else if ($game->secondSelectedCardIndex < 0) {
+        $game->secondSelectedCardIndex = $index;
+        // $game->secondCardSelected->revealed = true;
+
+        if ($game->cards[$game->firstSelectedCardIndex]->id === $game->cards[$game->secondSelectedCardIndex]->id) {
             $game->cards = array_filter($game->cards, function ($card) use ($game) {
-                return $card->id !== $game->firstCardSelected->id;
+                return $card->id !== $game->cards[$game->firstSelectedCardIndex]->id;
             });
-            $game->firstCardSelected = null;
-            $game->secondCardSelected = null;
+            $game->firstSelectedCardIndex = -1;
+            $game->secondSelectedCardIndex = -1;
         }
     } else {
-        $game->firstCardSelected->revealed = false;
-        $game->secondCardSelected->revealed = false;
-        $game->firstCardSelected = null;
-        $game->secondCardSelected = null;
-        $game->firstCardSelected = $game->cards[$index];
-        $game->firstCardSelected->revealed = true;
+        $game->firstSelectedCardIndex = $index;
+        // $game->firstSelectedCardIndex = -1;
+        $game->secondSelectedCardIndex = -1;
     }
 }
 
@@ -67,21 +70,20 @@ if (isset($_POST["test"])) {
 </head>
 
 <body>
-    <form action="./index.php" method="post">
-        <div class="grid-game">
-            <?php foreach ($game->cards as $key => $card): ?>
-                <div class="tile">
-                    <input type="submit" name="test" value="<?= $key ?>">
-                    <?php if ($card->revealed): ?>
-                        <img src="<?= $card->img_path ?>" alt="image">
-                    <?php else: ?>
-                        <img src="./assets/card-back-purple.png" alt="image">
-                    <?php endif; ?>
-                </div>
-
-            <?php endforeach; ?>
-        </div>
-    </form>
+    <?php if (!$game->gameStarted): ?>
+        <form action="./index.php" method="post">
+            <button type="submit" name="menu" value="start">Start game</button>
+        </form>
+    <?php else: ?>
+        <form action="./index.php" method="post">
+            <button type="submit" name="menu" value="quit">Quit game</button>
+            <div class="grid-game">
+                <?php foreach ($game->cards as $key => $card): ?>
+                    <button class="tile" name="reveal" value="<?= $key ?>" type="submit" style="<?= "background-image: url(" . $game->getImageFromIndex($key) . ");" ?>"></button>
+                <?php endforeach; ?>
+            </div>
+        </form>
+    <?php endif; ?>
 </body>
 
 </html>
