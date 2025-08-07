@@ -3,34 +3,35 @@
 } */
 .grid-game {
   display: grid;
-  justify-content: center;
-
-  background-color: aquamarine;
   width: 100%;
-  /* gap: 30px; */
-  row-gap: 50px;
+  justify-content: center;
+  gap: 10px;
+  background-color: aquamarine;
 }
 
 .grid-col-3 {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 150px));
 }
 
 .grid-col-6,
 .grid-col-8 {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 150px));
 }
 
 .grid-col-10 {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 150px));
 }
 
 .grid-col-12 {
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 150px));
 }
 
 .tile {
-  width: 150px;
-  height: 200px;
+  /*max-width: 150px;*/
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  /*height: auto;*/
+  /*min-height: 50px;*/
   background-color: rgb(148, 148, 236);
   background-size: contain;
   background-repeat: no-repeat;

@@ -9,14 +9,14 @@ class Memory
     /**
      * @var Card[]
      */
+    public array $cards;
     public bool $gameStarted;
     public int $firstSelectedCardIndex;
     public int $secondSelectedCardIndex;
-    public array $cards;
-    public int $nbofPairs;
+    public int $nbOfPairs;
 
     /**
-     * @param Card[]
+     * @param Card[] $deck
      */
     public function __construct(array $deck)
     {
@@ -29,7 +29,7 @@ class Memory
         $this->gameStarted = false;
         $this->firstSelectedCardIndex = -1;
         $this->secondSelectedCardIndex = -1;
-        $this->nbofPairs = 4;
+        $this->nbOfPairs = 4;
     }
 
     public function startGame(int $nbOfPairs)
@@ -39,12 +39,12 @@ class Memory
             $nbOfPairs !== 10 && $nbOfPairs !== 12
         ) {
             // default value
-            $this->nbofPairs = 4;
+            $this->nbOfPairs = 4;
         } else {
-            $this->nbofPairs = $nbOfPairs;
+            $this->nbOfPairs = $nbOfPairs;
         }
         $this->cards = [];
-        $this->setRandomCardsFromDeck($nbOfPairs);
+        $this->setRandomCardsFromDeck($this->nbOfPairs);
         $this->gameStarted = true;
     }
 
@@ -73,6 +73,6 @@ class Memory
             return $this->cards[$index]->img_path;
         }
         // Todo put card back in game
-        return "./assets/card-back-purple";
+        return "./assets/card-back-purple.png";
     }
 }

@@ -14,15 +14,15 @@ if (isset($_SESSION["game"])) {
 } else {
     echo "Create new game";
     $stmt = $db->query("SELECT * FROM cards");
-    $cardss = $stmt->fetchAll(PDO::FETCH_CLASS, "Card");
-    $game = new Memory($cardss);
+    $cards = $stmt->fetchAll(PDO::FETCH_CLASS, "Card");
+    $game = new Memory($cards);
     $_SESSION["game"] = $game;
 }
 
 if (isset($_POST["menu"])) {
     var_dump($_POST["menu"]);
-    if ($_POST["menu"] === "start" && !$game->gameStarted) {
-        $game->startGame(12);
+    if ($_POST["menu"] === "start" && isset($_POST["nb-pairs"]) && !$game->gameStarted) {
+        $game->startGame((int)$_POST["nb-pairs"]);
     } else if ($_POST["menu"] === "quit" && $game->gameStarted) {
         $game->stopGame();
     }
@@ -72,6 +72,7 @@ if (isset($_POST["reveal"])) {
 <body>
     <?php if (!$game->gameStarted): ?>
         <form action="./index.php" method="post">
+            <label for="nb-pairs">Number of pairs</label>
             <select name="nb-pairs" id="nb-pairs">
                 <option value="3" selected>3</option>
                 <option value="6">6</option>
@@ -84,7 +85,7 @@ if (isset($_POST["reveal"])) {
     <?php else: ?>
         <form action="./index.php" method="post">
             <button type="submit" name="menu" value="quit">Quit game</button>
-            <div class="grid-game grid-col-<?= $game->nbofPairs ?>">
+            <div class="grid-game grid-col-<?= $game->nbOfPairs ?>">
                 <?php foreach ($game->cards as $key => $card): ?>
                     <button class="tile" name="reveal" value="<?= $key ?>" type="submit" style="<?= "background-image: url(" . $game->getImageFromIndex($key) . ");" ?>"></button>
                 <?php endforeach; ?>
