@@ -7,7 +7,7 @@ session_name("memory");
 session_start();
 // TODO delete
 // session_destroy();
-
+// TODO left side bar with score etc, right side bar with leaderboard?
 
 if (isset($_SESSION["game"])) {
     $game = $_SESSION["game"];
@@ -20,41 +20,21 @@ if (isset($_SESSION["game"])) {
 }
 
 if (isset($_POST["menu"])) {
-    var_dump($_POST["menu"]);
-    if ($_POST["menu"] === "start" && isset($_POST["nb-pairs"]) && !$game->gameStarted) {
-        $game->startGame((int)$_POST["nb-pairs"]);
+    if ($_POST["menu"] === "start" && !$game->gameStarted) {
+        $game->startGame();
     } else if ($_POST["menu"] === "quit" && $game->gameStarted) {
         $game->stopGame();
     }
 }
+if (isset($_POST["nb-pairs"]) && !$game->gameStarted) {
+    $game->setRandomCardsFromDeck((int)$_POST["nb-pairs"]);
+}
 
+// TODO and gamestarted
 if (isset($_POST["reveal"])) {
-    echo "submit input";
     // TODO check errors, put in game class?
     $index = (int)$_POST["reveal"];
-    var_dump($index);
-    var_dump($game->firstSelectedCardIndex);
-
-    // TODO remove or
-    if ($game->firstSelectedCardIndex === $index || $game->firstSelectedCardIndex < 0) {
-        $game->firstSelectedCardIndex = $index;
-        // $game->firstCardSelected->revealed = true;
-    } else if ($game->secondSelectedCardIndex < 0) {
-        $game->secondSelectedCardIndex = $index;
-        // $game->secondCardSelected->revealed = true;
-
-        if ($game->cards[$game->firstSelectedCardIndex]->id === $game->cards[$game->secondSelectedCardIndex]->id) {
-            $game->cards = array_filter($game->cards, function ($card) use ($game) {
-                return $card->id !== $game->cards[$game->firstSelectedCardIndex]->id;
-            });
-            $game->firstSelectedCardIndex = -1;
-            $game->secondSelectedCardIndex = -1;
-        }
-    } else {
-        $game->firstSelectedCardIndex = $index;
-        // $game->firstSelectedCardIndex = -1;
-        $game->secondSelectedCardIndex = -1;
-    }
+    $game->setCardSelected($index);
 }
 
 ?>
@@ -65,33 +45,47 @@ if (isset($_POST["reveal"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>Memory</title>
 </head>
 
 <body>
-    <?php if (!$game->gameStarted): ?>
-        <form action="./index.php" method="post">
-            <label for="nb-pairs">Number of pairs</label>
-            <select name="nb-pairs" id="nb-pairs">
-                <option value="3" selected>3</option>
-                <option value="6">6</option>
-                <option value="8">8</option>
-                <option value="10">10</option>
-                <option value="12">12</option>
-            </select>
-            <button type="submit" name="menu" value="start">Start game</button>
-        </form>
-    <?php else: ?>
-        <form action="./index.php" method="post">
-            <button type="submit" name="menu" value="quit">Quit game</button>
+    <form action="./index.php" method="post">
+        <div class="sidebar">
+            <h1>Memory</h1>
+            <?php if (!$game->gameStarted): ?>
+                <div class="menu">
+                    <button type="submit" class="game-mode" name="nb-pairs" value="3">3 PAIRS</button>
+                    <button type="submit" class="game-mode" name="nb-pairs" value="6">6 PAIRS</button>
+                    <button type="submit" class="game-mode" name="nb-pairs" value="8">8 PAIRS</button>
+                    <button type="submit" class="game-mode" name="nb-pairs" value="10">10 PAIRS</button>
+                    <button type="submit" class="game-mode" name="nb-pairs" value="12">12 PAIRS</button>
+                    <button type="submit" class="game-mode" name="menu" value="start">Start game</button>
+                </div>
+            <?php else : ?>
+                <div class="in-game">
+                    <button type="submit" name="menu" value="quit">Quit game</button>
+
+                </div>
+            <?php endif; ?>
+        </div>
+    </form>
+    <form action="./index.php" method="post">
+        <div class="grid-wrapper">
             <div class="grid-game grid-col-<?= $game->nbOfPairs ?>">
                 <?php foreach ($game->cards as $key => $card): ?>
-                    <button class="tile" name="reveal" value="<?= $key ?>" type="submit" style="<?= "background-image: url(" . $game->getImageFromIndex($key) . ");" ?>"></button>
+                    <?php if (!$card->pairFound): ?>
+                        <button class="tile pair-not-found" name="reveal" value="<?= $key ?>" type="submit" style="<?= "background-image: url(" . $game->getImageFromIndex($key) . ");" ?>"></button>
+                    <?php else: ?>
+                        <div class="tile pair-found"></div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </div>
-        </form>
-    <?php endif; ?>
+        </div>
+    </form>
 </body>
 
 </html>

@@ -11,6 +11,7 @@ class Memory
      */
     public array $cards;
     public bool $gameStarted;
+    // public bool $gameStarted;
     public int $firstSelectedCardIndex;
     public int $secondSelectedCardIndex;
     public int $nbOfPairs;
@@ -29,37 +30,40 @@ class Memory
         $this->gameStarted = false;
         $this->firstSelectedCardIndex = -1;
         $this->secondSelectedCardIndex = -1;
-        $this->nbOfPairs = 4;
+        $this->nbOfPairs = 6;
+        $this->setRandomCardsFromDeck($this->nbOfPairs);
     }
 
-    public function startGame(int $nbOfPairs)
+    public function startGame()
     {
-        if (
-            $nbOfPairs !== 3 && $nbOfPairs !== 6 && $nbOfPairs !== 8 &&
-            $nbOfPairs !== 10 && $nbOfPairs !== 12
-        ) {
-            // default value
-            $this->nbOfPairs = 4;
-        } else {
-            $this->nbOfPairs = $nbOfPairs;
-        }
-        $this->cards = [];
-        $this->setRandomCardsFromDeck($this->nbOfPairs);
         $this->gameStarted = true;
     }
 
     public function stopGame()
     {
-        $this->cards = [];
         $this->gameStarted = false;
         $this->firstSelectedCardIndex = -1;
         $this->secondSelectedCardIndex = -1;
+        $this->setRandomCardsFromDeck($this->nbOfPairs);
     }
 
-    private function setRandomCardsFromDeck(int $nbofPairs)
+    public function setRandomCardsFromDeck(int $nbOfPairs)
     {
+        if ($this->gameStarted) {
+            return;
+        }
+        if (
+            $nbOfPairs !== 3 && $nbOfPairs !== 6 && $nbOfPairs !== 8 &&
+            $nbOfPairs !== 10 && $nbOfPairs !== 12
+        ) {
+            // default value
+            $this->nbOfPairs = 6;
+        } else {
+            $this->nbOfPairs = $nbOfPairs;
+        }
+        $this->cards = [];
         shuffle($this->deck);
-        for ($i = 0; $i < $nbofPairs; $i++) {
+        for ($i = 0; $i < $this->nbOfPairs; $i++) {
             $this->cards[] = Card::byCopy($this->deck[$i]);
             $this->cards[] = Card::byCopy($this->deck[$i]);
         }
@@ -73,6 +77,31 @@ class Memory
             return $this->cards[$index]->img_path;
         }
         // Todo put card back in game
-        return "./assets/card-back-purple.png";
+        return "";
+        // return "./assets/card-back-purple.png";
+    }
+
+    /** 
+     * @param int $index Index of the card selected from the current array of cards
+     */
+    public function setCardSelected($index)
+    {
+        if (!$this->gameStarted)
+            return;
+        if ($this->firstSelectedCardIndex === $index || $this->firstSelectedCardIndex < 0) {
+            $this->firstSelectedCardIndex = $index;
+        } else if ($this->secondSelectedCardIndex < 0) {
+            $this->secondSelectedCardIndex = $index;
+
+            if ($this->cards[$this->firstSelectedCardIndex]->id === $this->cards[$this->secondSelectedCardIndex]->id) {
+                $this->cards[$this->firstSelectedCardIndex]->pairFound = true;
+                $this->cards[$this->secondSelectedCardIndex]->pairFound = true;
+                $this->firstSelectedCardIndex = -1;
+                $this->secondSelectedCardIndex = -1;
+            }
+        } else {
+            $this->firstSelectedCardIndex = $index;
+            $this->secondSelectedCardIndex = -1;
+        }
     }
 }
