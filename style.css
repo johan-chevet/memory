@@ -47,12 +47,9 @@ textarea {
 }
 
 .tile {
-  /*max-width: 150px;*/
   width: 100%;
   aspect-ratio: 1 / 1;
-  /*height: auto;*/
-  /*min-height: 50px;*/
-  background-size: 60%;
+  background-size: 100%;
   background-repeat: no-repeat;
   background-position: center center;
   border-radius: 10px;
@@ -75,9 +72,17 @@ textarea {
   justify-content: flex-start;
   align-items: center;
   background-color: rgba(161, 101, 234, 0.43);
-  float: left;
   width: 15%;
   position: fixed;
+  top: 0;
+}
+
+.sidebar.left {
+  left: 0;
+}
+
+.sidebar.right {
+  right: 0;
 }
 
 .sidebar h1 {
@@ -103,4 +108,9 @@ textarea {
   /* font-weight: bold; */
   /* font-weight: 300; */
   /* font-family: "Playwrite HU", sans-serif; */
+}
+
+.navbar {
+  background: green;
+  height:  3rem;
 }
