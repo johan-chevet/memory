@@ -26,8 +26,7 @@ textarea {
   justify-content: center;
   align-items: flex-start;
   flex: 1;
-  padding: 2rem;
-  padding-top: 4rem;
+  padding: 0.5rem;
 }
 
 .grid-game {
@@ -76,8 +75,9 @@ textarea {
 
 .content-wrapper {
   display: flex;
-  height: calc(100% - 100px);
-  overflow: hidden;
+  /* not working */
+  /* height: calc(100% - 100px); */
+  /* overflow: hidden; */
 }
 
 .sidebar {
@@ -114,10 +114,10 @@ textarea {
 }
 
 .game-mode {
-  all: unset;
+  /* all: unset; */
   padding: 0.5rem;
   background-color: #e5e5e5;
-  border: solid .1rem black;
+  border: solid 0.1rem black;
   border-radius: 10px;
   font-size: 1.1rem;
   font-weight: bold;
@@ -126,7 +126,7 @@ textarea {
 }
 
 .game-mode option {
-  border-radius: .5rem;
+  border-radius: 0.5rem;
 }
 
 .game-mode:hover {
@@ -136,7 +136,7 @@ textarea {
 }
 
 .navbar {
-  background: rgb(148, 148, 236);;
+  background: rgb(148, 148, 236);
   height: 100px;
   display: flex;
   align-items: center;
@@ -150,27 +150,27 @@ textarea {
 }
 
 .navbar h1:hover {
-  color: white
+  color: white;
 }
 
 .navbar h1 {
   margin: 0;
-} 
+}
 
 .navbar .nav-btn {
   all: unset;
   cursor: pointer;
   font-weight: 500;
-  border: solid .1rem black;
-  padding: .5rem;
-  border-radius: .5rem;
+  border: solid 0.1rem black;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   background-color: #e5e5e5;
   color: rgb(148, 148, 236);
 }
 
 .navbar .nav-btn:hover {
-    background-color: rgba(161, 101, 234, 0.43);
-    color: white
+  background-color: rgba(161, 101, 234, 0.43);
+  color: white;
 }
 
 .navbar .navbar-right-content {
